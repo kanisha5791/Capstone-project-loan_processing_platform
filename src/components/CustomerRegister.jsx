@@ -15,6 +15,15 @@ function CustomerRegister({ onRegister, onBackToLogin }) {
       setMessage("Please fill all fields");
       return;
     }
+    const passwordPattern =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$!%]).{8,}$/;
+
+if (!passwordPattern.test(password)) {
+  setMessage(
+    "Password must be at least 8 characters and contain uppercase, lowercase, number and special character"
+  );
+  return;
+}
 
     if (password !== confirmPassword) {
       setMessage("Passwords do not match");

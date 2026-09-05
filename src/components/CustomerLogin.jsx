@@ -9,9 +9,37 @@ function CustomerLogin({ onLogin, onRegister }) {
     const handleLogin = async (e) => {
         e.preventDefault();
 
+<<<<<<< HEAD
         if (!email || !password) {
             setError("Please enter email and password");
             return;
+=======
+    if (!email || !password) {
+  setError("Please enter email and password");
+  return;
+}
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+if (!emailPattern.test(email)) {
+  setError("Please enter a valid email address");
+  return;
+}
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch(
+        "http://localhost:8080/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+>>>>>>> 4cecbce (Update customer login and registration)
         }
 
         setLoading(true);
@@ -49,7 +77,6 @@ function CustomerLogin({ onLogin, onRegister }) {
                 setLoading(false);
                 return;
             }
-
             localStorage.setItem("token", data.token);
             localStorage.setItem("email", data.email);
             localStorage.setItem("role", data.role);
