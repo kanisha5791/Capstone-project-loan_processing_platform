@@ -321,12 +321,6 @@ function App() {
 
       </div>
 
-      {/* DASHBOARD */}
-
-      <DashboardCards
-        refresh={refresh}
-      />
-
       {/* LOAN FORM */}
 
       <div id="loan-form">
@@ -392,7 +386,6 @@ function App() {
   );
 }
 
-
 // =====================================================
 // CUSTOMER DASHBOARD COMPONENT
 // =====================================================
@@ -426,9 +419,7 @@ function CustomerDashboard({
     loanType: "",
 
     loanTerm: "",
-
   });
-
 
   // =========================
   // INPUT CHANGE
@@ -437,16 +428,13 @@ function CustomerDashboard({
   const handleChange = (e) => {
 
     setLoan({
-
       ...loan,
 
       [e.target.name]:
         e.target.value,
-
     });
 
   };
-
 
   // =========================
   // APPLY LOAN
@@ -470,7 +458,6 @@ function CustomerDashboard({
       );
 
       return;
-
     }
 
     setLoading(true);
@@ -521,11 +508,9 @@ function CustomerDashboard({
 
               status:
                 "Pending",
-
             }),
           }
         );
-
 
       if (!response.ok) {
 
@@ -543,13 +528,10 @@ function CustomerDashboard({
         setLoading(false);
 
         return;
-
       }
-
 
       const data =
         await response.json();
-
 
       setCustomerLoan(data);
 
@@ -558,7 +540,6 @@ function CustomerDashboard({
       setMessage(
         "Loan Application Submitted Successfully!"
       );
-
 
       setLoan({
 
@@ -573,9 +554,7 @@ function CustomerDashboard({
         loanType: "",
 
         loanTerm: "",
-
       });
-
 
     } catch (error) {
 
@@ -590,7 +569,6 @@ function CustomerDashboard({
     setLoading(false);
 
   };
-
 
   // =========================
   // TRACK MY LOAN
@@ -611,7 +589,6 @@ function CustomerDashboard({
             "email"
           );
 
-
         const response =
           await fetch(
             `http://localhost:8080/loan/customer/email?email=${encodeURIComponent(
@@ -624,10 +601,8 @@ function CustomerDashboard({
                 Authorization:
                   `Bearer ${token}`,
               },
-
             }
           );
-
 
         if (!response.ok) {
 
@@ -636,13 +611,10 @@ function CustomerDashboard({
           );
 
           return;
-
         }
-
 
         const data =
           await response.json();
-
 
         if (
           Array.isArray(data)
@@ -661,9 +633,7 @@ function CustomerDashboard({
             );
 
             return;
-
           }
-
 
           setCustomerLoan(
             data[data.length - 1]
@@ -677,7 +647,6 @@ function CustomerDashboard({
 
         }
 
-
       } catch (error) {
 
         console.error(error);
@@ -690,13 +659,10 @@ function CustomerDashboard({
 
     };
 
-
   return (
-
     <div
       style={{
         minHeight: "100vh",
-
         background:
           "linear-gradient(135deg,#f8fafc,#dbeafe)",
       }}
@@ -740,7 +706,6 @@ function CustomerDashboard({
 
       </div>
 
-
       {/* MAIN */}
 
       <div className="container py-5">
@@ -765,7 +730,6 @@ function CustomerDashboard({
 
         </div>
 
-
         {/* MESSAGE */}
 
         {message && (
@@ -777,7 +741,6 @@ function CustomerDashboard({
           </div>
 
         )}
-
 
         {/* BUTTONS */}
 
@@ -796,7 +759,6 @@ function CustomerDashboard({
             📝 Apply for Loan
           </button>
 
-
           <button
             className="btn btn-dark btn-lg"
             onClick={handleTrackLoan}
@@ -805,7 +767,6 @@ function CustomerDashboard({
           </button>
 
         </div>
-
 
         {/* APPLY FORM */}
 
@@ -820,7 +781,6 @@ function CustomerDashboard({
             >
               Loan Application
             </h2>
-
 
             <form
               onSubmit={handleSubmit}
@@ -853,7 +813,6 @@ function CustomerDashboard({
 
                 </div>
 
-
                 {/* EMAIL */}
 
                 <div
@@ -874,7 +833,6 @@ function CustomerDashboard({
                   />
 
                 </div>
-
 
                 {/* PHONE */}
 
@@ -901,7 +859,6 @@ function CustomerDashboard({
 
                 </div>
 
-
                 {/* AMOUNT */}
 
                 <div
@@ -926,7 +883,6 @@ function CustomerDashboard({
                   />
 
                 </div>
-
 
                 {/* TYPE */}
 
@@ -973,162 +929,221 @@ function CustomerDashboard({
 
                 </div>
 
+                {/* TERM */}
 
-             {/* TERM */}
+                <div className="col-md-6 mb-3">
 
-<div className="col-md-6 mb-3">
+                  <label className="form-label fw-semibold">
+                    Loan Term (Years)
+                  </label>
 
-  <label className="form-label fw-semibold">
-    Loan Term (Years)
-  </label>
+                  <input
+                    type="number"
+                    name="loanTerm"
+                    className="form-control"
+                    placeholder="Enter loan term"
+                    value={
+                      loan.loanTerm
+                    }
+                    onChange={
+                      handleChange
+                    }
+                  />
 
-  <input
-    type="number"
-    name="loanTerm"
-    className="form-control"
-    placeholder="Enter loan term"
-    value={loan.loanTerm}
-    onChange={handleChange}
-  />
+                </div>
 
-</div>
+              </div>
 
-</div>
+              <div className="text-center mt-3">
 
-<div className="text-center mt-3">
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-lg"
+                  disabled={loading}
+                >
+                  {loading
+                    ? "Submitting..."
+                    : "Submit Application"}
+                </button>
 
-  <button
-    type="submit"
-    className="btn btn-primary btn-lg"
-    disabled={loading}
-  >
-    {loading
-      ? "Submitting..."
-      : "Submit Application"}
-  </button>
+              </div>
 
-</div>
+            </form>
 
-</form>
+          </div>
 
-</div>
+        )}
+                {/* MY LOAN */}
 
-)}
+        {customerLoan && (
 
-{/* MY LOAN */}
+          <div
+            className="card shadow-lg border-0 p-5"
+            style={{
+              borderRadius: "20px",
+            }}
+          >
 
-{customerLoan && (
+            <h2 className="fw-bold text-center mb-4">
+              My Loan
+            </h2>
 
-  <div className="card shadow-lg border-0 p-5">
+            <div className="row mb-3">
 
-    <h2 className="fw-bold text-center mb-4">
-      My Loan
-    </h2>
+              <div className="col-6">
+                <strong>Loan ID</strong>
+              </div>
 
-    <div className="row mb-3">
-      <div className="col-6">
-        <strong>Loan ID</strong>
+              <div className="col-6">
+                {customerLoan.id}
+              </div>
+
+            </div>
+
+            <div className="row mb-3">
+
+              <div className="col-6">
+                <strong>Customer Name</strong>
+              </div>
+
+              <div className="col-6">
+                {customerLoan.customerName}
+              </div>
+
+            </div>
+
+            <div className="row mb-3">
+
+              <div className="col-6">
+                <strong>Email</strong>
+              </div>
+
+              <div className="col-6">
+                {customerLoan.email}
+              </div>
+
+            </div>
+
+            <div className="row mb-3">
+
+              <div className="col-6">
+                <strong>Phone</strong>
+              </div>
+
+              <div className="col-6">
+                {customerLoan.phone}
+              </div>
+
+            </div>
+
+            <div className="row mb-3">
+
+              <div className="col-6">
+                <strong>Loan Type</strong>
+              </div>
+
+              <div className="col-6">
+                {customerLoan.loanType}
+              </div>
+
+            </div>
+
+            <div className="row mb-3">
+
+              <div className="col-6">
+                <strong>Loan Amount</strong>
+              </div>
+
+              <div className="col-6">
+                ₹ {customerLoan.loanAmount}
+              </div>
+
+            </div>
+
+            <div className="row mb-3">
+
+              <div className="col-6">
+                <strong>Loan Term</strong>
+              </div>
+
+              <div className="col-6">
+                {customerLoan.loanTerm} Years
+              </div>
+
+            </div>
+
+            <hr />
+
+            {/* STATUS */}
+
+            <div className="text-center mt-4">
+
+              <h4 className="fw-bold mb-3">
+                Application Status
+              </h4>
+
+              {customerLoan.status === "Approved" && (
+
+                <div className="alert alert-success">
+
+                  <h4 className="fw-bold">
+                    ✅ Loan Approved
+                  </h4>
+
+                  <p className="mb-0">
+                    Congratulations! Your loan application
+                    has been approved.
+                  </p>
+
+                </div>
+
+              )}
+
+              {customerLoan.status === "Rejected" && (
+
+                <div className="alert alert-danger">
+
+                  <h4 className="fw-bold">
+                    ❌ Loan Rejected
+                  </h4>
+
+                  <p className="mb-0">
+                    Your loan application has been rejected.
+                  </p>
+
+                </div>
+
+              )}
+
+              {customerLoan.status !== "Approved" &&
+                customerLoan.status !== "Rejected" && (
+
+                  <div className="alert alert-warning">
+
+                    <h4 className="fw-bold">
+                      ⏳ Application Under Review
+                    </h4>
+
+                    <p className="mb-0">
+                      Your loan application is currently
+                      being reviewed by the admin.
+                    </p>
+
+                  </div>
+
+                )}
+
+            </div>
+
+          </div>
+
+        )}
+
       </div>
 
-      <div className="col-6">
-        {customerLoan.id}
-      </div>
     </div>
 
-    <div className="row mb-3">
-      <div className="col-6">
-        <strong>Customer Name</strong>
-      </div>
-
-      <div className="col-6">
-        {customerLoan.customerName}
-      </div>
-    </div>
-
-    <div className="row mb-3">
-      <div className="col-6">
-        <strong>Email</strong>
-      </div>
-
-      <div className="col-6">
-        {customerLoan.email}
-      </div>
-    </div>
-
-    <div className="row mb-3">
-      <div className="col-6">
-        <strong>Phone</strong>
-      </div>
-
-      <div className="col-6">
-        {customerLoan.phone}
-      </div>
-    </div>
-
-    <div className="row mb-3">
-      <div className="col-6">
-        <strong>Loan Type</strong>
-      </div>
-
-      <div className="col-6">
-        {customerLoan.loanType}
-      </div>
-    </div>
-
-    <div className="row mb-3">
-      <div className="col-6">
-        <strong>Loan Amount</strong>
-      </div>
-
-      <div className="col-6">
-        ₹ {customerLoan.loanAmount}
-      </div>
-    </div>
-
-    <div className="row mb-3">
-      <div className="col-6">
-        <strong>Loan Term</strong>
-      </div>
-
-      <div className="col-6">
-        {customerLoan.loanTerm} Years
-      </div>
-    </div>
-
-    <hr />
-
-    {/* STATUS */}
-
-    <div className="text-center">
-
-      <h4 className="fw-bold mb-3">
-        Application Status
-      </h4>
-
-      <span
-        className={`badge fs-4 px-4 py-3 ${
-          customerLoan.status === "Approved"
-            ? "bg-success"
-            : customerLoan.status === "Rejected"
-            ? "bg-danger"
-            : "bg-warning text-dark"
-        }`}
-      >
-        {customerLoan.status}
-      </span>
-
-    </div>
-
-  </div>
-
-)}
-
-</div>
-
-</div>
-
-);
-
+  );
 }
 
-export default App;  
+export default App;

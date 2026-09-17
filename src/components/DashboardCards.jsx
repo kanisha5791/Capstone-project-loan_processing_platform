@@ -11,26 +11,43 @@ function DashboardCards({ refresh }) {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch("http://localhost:8080/loan");
+        const token = localStorage.getItem("token");
+        const email = localStorage.getItem("email");
+
+        const response = await fetch(
+          "http://localhost:8080/loan",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!response.ok) {
-          throw new Error("Failed to fetch loan data");
+          throw new Error(
+            `Failed to fetch loans: ${response.status}`
+          );
         }
 
         const data = await response.json();
 
-        setStats({
-          total: data.length,
+        // Logged-in customer's loans only
+        const customerLoans = data.filter(
+          (loan) =>
+            loan.email &&
+            loan.email.toLowerCase() === email.toLowerCase()
+        );
 
-          approved: data.filter(
+        setStats({
+          total: customerLoans.length,
+          approved: customerLoans.filter(
             (loan) => loan.status === "Approved"
           ).length,
-
-          pending: data.filter(
+          pending: customerLoans.filter(
             (loan) => loan.status === "Pending"
           ).length,
-
-          rejected: data.filter(
+          rejected: customerLoans.filter(
             (loan) => loan.status === "Rejected"
           ).length,
         });
@@ -83,19 +100,13 @@ function DashboardCards({ refresh }) {
                 borderRadius: "20px",
               }}
             >
-              <div
-                style={{
-                  fontSize: "50px",
-                }}
-              >
+              <div style={{ fontSize: "50px" }}>
                 {card.icon}
               </div>
 
               <h2
                 className="fw-bold mt-3"
-                style={{
-                  color: card.color,
-                }}
+                style={{ color: card.color }}
               >
                 {card.value}
               </h2>

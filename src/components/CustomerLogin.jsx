@@ -9,37 +9,16 @@ function CustomerLogin({ onLogin, onRegister }) {
     const handleLogin = async (e) => {
         e.preventDefault();
 
-<<<<<<< HEAD
         if (!email || !password) {
             setError("Please enter email and password");
             return;
-=======
-    if (!email || !password) {
-  setError("Please enter email and password");
-  return;
-}
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-if (!emailPattern.test(email)) {
-  setError("Please enter a valid email address");
-  return;
-}
+        }
 
-    setLoading(true);
-    setError("");
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    try {
-      const response = await fetch(
-        "http://localhost:8080/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            password,
-          }),
->>>>>>> 4cecbce (Update customer login and registration)
+        if (!emailPattern.test(email)) {
+            setError("Please enter a valid email address");
+            return;
         }
 
         setLoading(true);
@@ -60,23 +39,22 @@ if (!emailPattern.test(email)) {
                 }
             );
 
-            const data = await response.json();
+            const text = await response.text();
 
             if (!response.ok) {
-                setError(
-                    typeof data === "string"
-                        ? data
-                        : "Invalid email or password"
-                );
+                setError(text || "Invalid email or password");
                 setLoading(false);
                 return;
             }
+
+            const data = JSON.parse(text);
 
             if (data.role !== "CUSTOMER") {
                 setError("This login is only for customers");
                 setLoading(false);
                 return;
             }
+
             localStorage.setItem("token", data.token);
             localStorage.setItem("email", data.email);
             localStorage.setItem("role", data.role);
@@ -107,9 +85,7 @@ if (!emailPattern.test(email)) {
                 }}
             >
                 <div className="text-center mb-4">
-                    <div style={{ fontSize: "55px" }}>
-                        👤
-                    </div>
+                    <div style={{ fontSize: "55px" }}>👤</div>
 
                     <h2 className="fw-bold">
                         Customer Login
@@ -156,7 +132,9 @@ if (!emailPattern.test(email)) {
                         className="btn btn-primary btn-lg w-100"
                         disabled={loading}
                     >
-                        {loading ? "Signing in..." : "Customer Login"}
+                        {loading
+                            ? "Signing in..."
+                            : "Customer Login"}
                     </button>
                 </form>
 
