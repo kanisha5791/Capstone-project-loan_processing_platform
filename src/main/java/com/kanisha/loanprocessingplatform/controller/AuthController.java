@@ -5,10 +5,18 @@ import com.kanisha.loanprocessingplatform.respository.LoginHistoryRepository;
 import com.kanisha.loanprocessingplatform.service.AuthService;
 import com.kanisha.loanprocessingplatform.service.JwtService;
 import com.kanisha.loanprocessingplatform.service.EmailService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin(origins = {
@@ -17,12 +25,16 @@ import java.time.LocalDateTime;
         "http://localhost:5175"
 })
 public class AuthController {
+
     @Autowired
     private AuthService authService;
+
     @Autowired
     private JwtService jwtService;
+
     @Autowired
     private EmailService emailService;
+
     @Autowired
     private LoginHistoryRepository loginHistoryRepository;
 
@@ -33,7 +45,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(
-            @RequestBody LoginRequest request) {
+            @RequestBody @Valid LoginRequest request) {
 
         User user = authService.login(
                 request.getEmail(),
@@ -60,12 +72,19 @@ public class AuthController {
 
 
         // =========================
+        // SEND LOGIN EMAIL
+        // =========================
+
+       //emailService.sendLoginEmail(
+             // user.getEmail(),
+               // LocalDateTime.now().toString()
+       // );
+
+
+        // =========================
         // GENERATE JWT TOKEN
         // =========================
-        emailService.sendLoginEmail(
-                user.getEmail(),
-                java.time.LocalDateTime.now().toString()
-        );
+
         String token = jwtService.generateToken(
                 user.getEmail(),
                 user.getRole()
@@ -89,31 +108,29 @@ public class AuthController {
     // =========================
     // CUSTOMER REGISTER
     // =========================
+
     @PostMapping("/register")
     public ResponseEntity<?> register(
-            @RequestBody RegisterRequest request) {
-
-        String password = request.getPassword();
-        if (!password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$!%]).{8,}$")) {
-            return ResponseEntity.badRequest()
-                    .body("Password must be at least 8 characters and contain uppercase, lowercase, number and special character");
-        }
+            @RequestBody @Valid RegisterRequest request) {
 
         try {
+
             User user = authService.registerUser(
                     request.getEmail(),
                     request.getPassword(),
                     "CUSTOMER"
             );
-
+            System.out.println("SIGNUP SUCCESS = [" + user.getEmail() + "]");
             return ResponseEntity.ok(user);
 
         } catch (RuntimeException e) {
+
             return ResponseEntity
                     .badRequest()
                     .body(e.getMessage());
         }
     }
+
 
     // =========================
     // LOGIN REQUEST
@@ -121,8 +138,12 @@ public class AuthController {
 
     public static class LoginRequest {
 
+        @NotBlank(message = "Email is required")
+        @Email(message = "Enter a valid email")
         private String email;
 
+
+        @NotBlank(message = "Password is required")
         private String password;
 
 
@@ -166,9 +187,7 @@ public class AuthController {
                 String role) {
 
             this.token = token;
-
             this.email = email;
-
             this.role = role;
         }
 
@@ -195,8 +214,17 @@ public class AuthController {
 
     public static class RegisterRequest {
 
+        @NotBlank(message = "Email is required")
+        @Email(message = "Enter a valid email")
         private String email;
 
+
+        @NotBlank(message = "Password is required")
+        @Size(min = 8, message = "Password must be at least 8 characters")
+        @Pattern(
+                regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$!%]).{8,}$",
+                message = "Password must contain uppercase, lowercase, number and special character"
+        )
         private String password;
 
 

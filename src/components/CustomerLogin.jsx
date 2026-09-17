@@ -25,6 +25,8 @@ function CustomerLogin({ onLogin, onRegister }) {
         setError("");
 
         try {
+            console.log("LOGIN BUTTON CLICKED");
+
             const response = await fetch(
                 "http://localhost:8080/auth/login",
                 {
