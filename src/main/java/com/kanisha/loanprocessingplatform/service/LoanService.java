@@ -13,11 +13,16 @@ public class LoanService {
     @Autowired
     private LoanRepository loanRepository;
 
+    @Autowired
+    private EmailService emailService;
+
+
     // =========================
     // GET ALL LOANS
     // =========================
 
     public Iterable<Loan> getAllLoans() {
+
         return loanRepository.findAll();
     }
 
@@ -144,8 +149,37 @@ public class LoanService {
             return null;
         }
 
+        // Update status
         loan.setStatus(status);
 
-        return loanRepository.save(loan);
+        // Save updated loan
+        Loan updatedLoan = loanRepository.save(loan);
+
+
+        // =========================
+        // SEND EMAIL TO CUSTOMER
+        // =========================
+
+        if ("Approved".equalsIgnoreCase(status)) {
+
+            emailService.sendLoanApprovedEmail(
+                    updatedLoan.getEmail(),
+                    updatedLoan.getCustomerName(),
+                    updatedLoan.getLoanType(),
+                    updatedLoan.getLoanAmount()
+            );
+
+        } else if ("Rejected".equalsIgnoreCase(status)) {
+
+            emailService.sendLoanRejectedEmail(
+                    updatedLoan.getEmail(),
+                    updatedLoan.getCustomerName(),
+                    updatedLoan.getLoanType(),
+                    updatedLoan.getLoanAmount()
+            );
+        }
+
+
+        return updatedLoan;
     }
 }

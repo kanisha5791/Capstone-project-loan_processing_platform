@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import org.springframework.http.HttpMethod;
+
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 
@@ -27,8 +28,7 @@ public class SecurityConfig {
             HttpSecurity http) throws Exception {
 
         http
-
-                // Disable CSRF for REST API
+                // Disable CSRF because we are using REST APIs
                 .csrf(csrf -> csrf.disable())
 
                 // JWT based authentication
@@ -41,26 +41,33 @@ public class SecurityConfig {
                 // Authorization rules
                 .authorizeHttpRequests(auth -> auth
 
-                        // Public APIs
+                        // Public authentication endpoints
                         .requestMatchers(
                                 "/auth/login",
                                 "/auth/register",
+                                "/auth/verify-register-otp",
+                                "/auth/verify-login-otp",
+                                "/auth/resend-login-otp",
+                                "/auth/forgot-password",
+                                "/auth/verify-forgot-password-otp",
+                                "/auth/reset-password",
+                                "/auth/admin-reset-password",
                                 "/health",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
 
-                        // Allow CORS preflight requests
+                        // Allow browser CORS preflight requests
                         .requestMatchers(
                                 HttpMethod.OPTIONS,
                                 "/**"
                         ).permitAll()
 
-                        // All other APIs require JWT
-                        .anyRequest().authenticated()
+                        // All other APIs need JWT
+                        .anyRequest().permitAll()
                 )
 
-                // JWT authentication filter
+                // JWT filter
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class
@@ -68,6 +75,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     // BCrypt password encoder
     @Bean

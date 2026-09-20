@@ -43,8 +43,9 @@ function Login({ onLogin }) {
         setLoading(false);
         return;
       }
-
+      console.log("LOGIN RESPONSE =", data);
       // Save JWT token
+
       localStorage.setItem("token", data.token);
 
       // Save logged-in user's email

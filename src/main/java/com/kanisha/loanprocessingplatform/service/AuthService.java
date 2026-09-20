@@ -15,10 +15,33 @@ public class AuthService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public User registerUser(String email, String password, String role) {
+
+    // =========================
+    // CHECK EMAIL
+    // =========================
+
+    public boolean emailExists(String email) {
+
+        return userRepository
+                .findByEmail(email)
+                .isPresent();
+    }
+
+
+    // =========================
+    // REGISTER USER
+    // =========================
+
+    public User registerUser(
+            String email,
+            String password,
+            String role) {
 
         if (userRepository.findByEmail(email).isPresent()) {
-            throw new RuntimeException("Email already exists");
+
+            throw new RuntimeException(
+                    "Email already exists"
+            );
         }
 
         User user = new User(
@@ -30,21 +53,85 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    public User login(String email, String password) {
 
-        System.out.println("LOGIN EMAIL = [" + email + "]");
+    // =========================
+    // LOGIN
+    // =========================
 
-        User user = userRepository.findByEmail(email)
+    public User login(
+            String email,
+            String password) {
+
+        System.out.println(
+                "LOGIN EMAIL = [" + email + "]"
+        );
+
+        User user = userRepository
+                .findByEmail(email)
                 .orElse(null);
 
         if (user == null) {
+
+            System.out.println("USER NOT FOUND");
+
             return null;
         }
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        // Temporary check
+        boolean passwordMatch =
+                passwordEncoder.matches(
+                        password,
+                        user.getPassword()
+                );
+
+        System.out.println(
+                "PASSWORD MATCH = " + passwordMatch
+        );
+
+        if (!passwordMatch) {
+
             return null;
         }
 
         return user;
+    }
+
+
+    // =========================
+    // FIND USER BY EMAIL
+    // =========================
+
+    public User findUserByEmail(String email) {
+
+        return userRepository
+                .findByEmail(email)
+                .orElse(null);
+    }
+
+
+    // =========================
+    // RESET PASSWORD
+    // =========================
+
+    public void resetPassword(
+            String email,
+            String newPassword) {
+
+        User user = userRepository
+                .findByEmail(email)
+                .orElse(null);
+
+        if (user == null) {
+
+            throw new RuntimeException(
+                    "Email not registered"
+            );
+        }
+
+        user.setPassword(
+                passwordEncoder.encode(newPassword)
+        );
+
+        userRepository.save(user);
     }
 }

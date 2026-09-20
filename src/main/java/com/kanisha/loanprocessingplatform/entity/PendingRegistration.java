@@ -3,8 +3,8 @@ package com.kanisha.loanprocessingplatform.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "pending_registration")
+public class PendingRegistration {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,13 +19,12 @@ public class User {
     @Column(nullable = false)
     private String role;
 
-    @Column(nullable = false)
-    private boolean firstLogin = true;
 
-    public User() {
+    public PendingRegistration() {
     }
 
-    public User(
+
+    public PendingRegistration(
             String email,
             String password,
             String role) {
@@ -33,16 +32,13 @@ public class User {
         this.email = email;
         this.password = password;
         this.role = role;
-        this.firstLogin = true;
     }
+
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getEmail() {
         return email;
@@ -52,6 +48,7 @@ public class User {
         this.email = email;
     }
 
+
     public String getPassword() {
         return password;
     }
@@ -60,19 +57,12 @@ public class User {
         this.password = password;
     }
 
+
     public String getRole() {
         return role;
     }
 
     public void setRole(String role) {
         this.role = role;
-    }
-
-    public boolean isFirstLogin() {
-        return firstLogin;
-    }
-
-    public void setFirstLogin(boolean firstLogin) {
-        this.firstLogin = firstLogin;
     }
 }
