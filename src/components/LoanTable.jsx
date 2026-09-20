@@ -26,7 +26,7 @@ function LoanTable({ setSelectedLoan, refresh }) {
         const response = await fetch(url, {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -48,11 +48,8 @@ function LoanTable({ setSelectedLoan, refresh }) {
     fetchLoans();
   }, [refresh, search]);
 
-  // DELETE
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this loan?")) {
-      return;
-    }
+    if (!window.confirm("Are you sure you want to delete this loan?")) return;
 
     try {
       const token = localStorage.getItem("token");
@@ -62,7 +59,7 @@ function LoanTable({ setSelectedLoan, refresh }) {
         {
           method: "DELETE",
           headers: {
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -82,30 +79,23 @@ function LoanTable({ setSelectedLoan, refresh }) {
     }
   };
 
-  // EDIT
   const handleEdit = (loan) => {
     setSelectedLoan(loan);
   };
 
-  // UPDATE STATUS
   const handleStatusChange = async (loan, newStatus) => {
     try {
       const token = localStorage.getItem("token");
 
-      const updatedLoan = {
-        ...loan,
-        status: newStatus,
-      };
-
       const response = await fetch(
-        `http://localhost:8080/loan/${loan.id}`,
+        `http://localhost:8080/loan/${loan.id}/status?status=${encodeURIComponent(
+          newStatus
+        )}`,
         {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(updatedLoan),
         }
       );
 

@@ -1,86 +1,64 @@
 import { useEffect, useState } from "react";
 
-function DashboardCards({ refresh }) {
-  const [stats, setStats] = useState({
-    total: 0,
-    approved: 0,
-    pending: 0,
-    rejected: 0,
-  });
+function DashboardCards() {
+  const [loans, setLoans] = useState([]);
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const email = localStorage.getItem("email");
-
-        const response = await fetch(
-          "http://localhost:8080/loan",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
+    fetch("http://localhost:8080/loan")
+      .then((response) => {
         if (!response.ok) {
-          throw new Error(
-            `Failed to fetch loans: ${response.status}`
-          );
+          throw new Error("Failed to fetch loans");
         }
-
-        const data = await response.json();
-
-        // Logged-in customer's loans only
-        const customerLoans = data.filter(
-          (loan) =>
-            loan.email &&
-            loan.email.toLowerCase() === email.toLowerCase()
-        );
-
-        setStats({
-          total: customerLoans.length,
-          approved: customerLoans.filter(
-            (loan) => loan.status === "Approved"
-          ).length,
-          pending: customerLoans.filter(
-            (loan) => loan.status === "Pending"
-          ).length,
-          rejected: customerLoans.filter(
-            (loan) => loan.status === "Rejected"
-          ).length,
-        });
-      } catch (error) {
+        return response.json();
+      })
+      .then((data) => {
+        console.log("DASHBOARD LOANS:", data);
+        setLoans(Array.isArray(data) ? data : []);
+      })
+      .catch((error) => {
         console.error("Dashboard Error:", error);
-      }
-    };
+      });
+  }, []);
 
-    fetchStats();
-  }, [refresh]);
+  const total = loans.length;
+
+  const approved = loans.filter(
+    (loan) =>
+      String(loan.status).toLowerCase() === "approved"
+  ).length;
+
+  const pending = loans.filter(
+    (loan) =>
+      String(loan.status).toLowerCase() === "pending"
+  ).length;
+
+  const rejected = loans.filter(
+    (loan) =>
+      String(loan.status).toLowerCase() === "rejected"
+  ).length;
 
   const cards = [
     {
       title: "Total Loans",
-      value: stats.total,
+      value: total,
       icon: "📋",
       color: "#2563eb",
     },
     {
       title: "Approved",
-      value: stats.approved,
+      value: approved,
       icon: "✅",
       color: "#16a34a",
     },
     {
       title: "Pending",
-      value: stats.pending,
+      value: pending,
       icon: "⏳",
       color: "#f59e0b",
     },
     {
       title: "Rejected",
-      value: stats.rejected,
+      value: rejected,
       icon: "❌",
       color: "#dc2626",
     },
@@ -90,15 +68,10 @@ function DashboardCards({ refresh }) {
     <div className="container my-5">
       <div className="row">
         {cards.map((card, index) => (
-          <div
-            className="col-md-3 mb-4"
-            key={index}
-          >
+          <div className="col-md-3 mb-4" key={index}>
             <div
               className="card shadow-lg border-0 text-center p-4"
-              style={{
-                borderRadius: "20px",
-              }}
+              style={{ borderRadius: "20px" }}
             >
               <div style={{ fontSize: "50px" }}>
                 {card.icon}

@@ -1,141 +1,190 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-function DashboardCards({ refresh }) {
-  const [stats, setStats] = useState({
-    total: 0,
-    approved: 0,
-    pending: 0,
-    rejected: 0,
+function LoanForm({ refresh, setRefresh }) {
+  const [formData, setFormData] = useState({
+    customerName: "",
+    email: "",
+    phone: "",
+    loanAmount: "",
+    loanType: "",
+    loanTerm: "",
   });
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const role = localStorage.getItem("role");
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-        // Only ADMIN can view overall loan statistics
-        if (role !== "ADMIN") {
-          return;
-        }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        if (!token) {
-          console.log("Admin token not found");
-          return;
-        }
+    try {
+      const token = localStorage.getItem("token");
 
-        const response = await fetch(
-          "http://localhost:8080/loan",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+      const loanData = {
+        customerName: formData.customerName,
+        email: formData.email,
+        phone: formData.phone,
+        loanAmount: Number(formData.loanAmount),
+        loanType: formData.loanType,
+        loanTerm: Number(formData.loanTerm),
+        status: "Pending",
+      };
 
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch loans: ${response.status}`
-          );
-        }
+      const response = await fetch("http://localhost:8080/loan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(loanData),
+      });
 
-        const data = await response.json();
+      if (response.ok) {
+        alert("Loan Application Submitted Successfully!");
 
-        setStats({
-          total: data.length,
-
-          approved: data.filter(
-            (loan) => loan.status === "Approved"
-          ).length,
-
-          pending: data.filter(
-            (loan) => loan.status === "Pending"
-          ).length,
-
-          rejected: data.filter(
-            (loan) => loan.status === "Rejected"
-          ).length,
+        setFormData({
+          customerName: "",
+          email: "",
+          phone: "",
+          loanAmount: "",
+          loanType: "",
+          loanTerm: "",
         });
 
-      } catch (error) {
-        console.error("Dashboard Error:", error);
+        if (setRefresh) {
+          setRefresh(!refresh);
+        }
+      } else {
+        const errorText = await response.text();
+        console.error("Loan submission failed:", errorText);
+        alert("Loan Application Failed!");
       }
-    };
-
-    fetchStats();
-  }, [refresh]);
-
-  const cards = [
-    {
-      title: "Total Loans",
-      value: stats.total,
-      icon: "📋",
-      color: "#2563eb",
-    },
-    {
-      title: "Approved",
-      value: stats.approved,
-      icon: "✅",
-      color: "#16a34a",
-    },
-    {
-      title: "Pending",
-      value: stats.pending,
-      icon: "⏳",
-      color: "#f59e0b",
-    },
-    {
-      title: "Rejected",
-      value: stats.rejected,
-      icon: "❌",
-      color: "#dc2626",
-    },
-  ];
+    } catch (error) {
+      console.error("Loan Error:", error);
+      alert("Server Error while submitting loan!");
+    }
+  };
 
   return (
     <div className="container my-5">
-      <div className="row">
+      <div
+        className="card shadow-lg border-0 p-4"
+        style={{ borderRadius: "20px" }}
+      >
+        <h2 className="text-center fw-bold mb-4">
+          Loan Application
+        </h2>
 
-        {cards.map((card, index) => (
-          <div
-            className="col-md-3 mb-4"
-            key={index}
-          >
-            <div
-              className="card shadow-lg border-0 text-center p-4"
-              style={{
-                borderRadius: "20px",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "50px",
-                }}
-              >
-                {card.icon}
-              </div>
+        <form onSubmit={handleSubmit}>
+          <div className="row">
 
-              <h2
-                className="fw-bold mt-3"
-                style={{
-                  color: card.color,
-                }}
-              >
-                {card.value}
-              </h2>
-
-              <p className="text-muted fs-5 mb-0">
-                {card.title}
-              </p>
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Customer Name
+              </label>
+              <input
+                type="text"
+                name="customerName"
+                className="form-control"
+                value={formData.customerName}
+                onChange={handleChange}
+                required
+              />
             </div>
-          </div>
-        ))}
 
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                className="form-control"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Phone
+              </label>
+              <input
+                type="tel"
+                name="phone"
+                className="form-control"
+                value={formData.phone}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Loan Amount
+              </label>
+              <input
+                type="number"
+                name="loanAmount"
+                className="form-control"
+                value={formData.loanAmount}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Loan Type
+              </label>
+              <select
+                name="loanType"
+                className="form-select"
+                value={formData.loanType}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Loan Type</option>
+                <option value="Personal Loan">Personal Loan</option>
+                <option value="Education Loan">Education Loan</option>
+                <option value="Home Loan">Home Loan</option>
+                <option value="Vehicle Loan">Vehicle Loan</option>
+                <option value="Business Loan">Business Loan</option>
+              </select>
+            </div>
+
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Loan Term (Months)
+              </label>
+              <input
+                type="number"
+                name="loanTerm"
+                className="form-control"
+                value={formData.loanTerm}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+          </div>
+
+          <div className="text-center mt-3">
+            <button
+              type="submit"
+              className="btn btn-primary px-5 py-2"
+            >
+              Submit Loan Application
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
 }
 
-export default DashboardCards;
+export default LoanForm;
