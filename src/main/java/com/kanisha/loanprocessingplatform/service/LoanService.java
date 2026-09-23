@@ -2,6 +2,7 @@ package com.kanisha.loanprocessingplatform.service;
 
 import com.kanisha.loanprocessingplatform.entity.Loan;
 import com.kanisha.loanprocessingplatform.respository.LoanRepository;
+import com.kanisha.loanprocessingplatform.respository.DocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,9 @@ public class LoanService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private DocumentRepository documentRepository;
 
 
     // =========================
@@ -57,6 +61,44 @@ public class LoanService {
 
     public Loan saveLoan(Loan loan) {
 
+        double income = loan.getMonthlyIncome();
+        double asset = loan.getAssetValue();
+        double loanAmount = loan.getLoanAmount();
+        double existingEmi = loan.getExistingEmi();
+
+        // =========================
+        // ELIGIBILITY CHECK
+        // =========================
+
+        if (income >= 30000
+                && asset >= loanAmount
+                && existingEmi <= (income * 0.40)) {
+
+            loan.setEligibilityStatus("Eligible");
+
+        } else if (income < 20000
+                || asset < (loanAmount * 0.50)
+                || existingEmi > (income * 0.60)) {
+
+            loan.setEligibilityStatus("Not Eligible");
+
+        } else {
+
+            loan.setEligibilityStatus("Review Required");
+        }
+
+
+        // =========================
+        // DEFAULT LOAN STATUS
+        // =========================
+
+        if (loan.getStatus() == null
+                || loan.getStatus().isEmpty()) {
+
+            loan.setStatus("Pending");
+        }
+
+
         return loanRepository.save(loan);
     }
 
@@ -87,6 +129,7 @@ public class LoanService {
             return null;
         }
 
+
         existingLoan.setCustomerName(
                 loan.getCustomerName()
         );
@@ -111,9 +154,56 @@ public class LoanService {
                 loan.getLoanTerm()
         );
 
+
+        // =========================
+        // FINANCIAL DETAILS
+        // =========================
+
+        existingLoan.setMonthlyIncome(
+                loan.getMonthlyIncome()
+        );
+
+        existingLoan.setAssetValue(
+                loan.getAssetValue()
+        );
+
+        existingLoan.setExistingEmi(
+                loan.getExistingEmi()
+        );
+
+
+        // =========================
+        // RECALCULATE ELIGIBILITY
+        // =========================
+
+        double income = loan.getMonthlyIncome();
+        double asset = loan.getAssetValue();
+        double loanAmount = loan.getLoanAmount();
+        double existingEmi = loan.getExistingEmi();
+
+
+        if (income >= 30000
+                && asset >= loanAmount
+                && existingEmi <= (income * 0.40)) {
+
+            existingLoan.setEligibilityStatus("Eligible");
+
+        } else if (income < 20000
+                || asset < (loanAmount * 0.50)
+                || existingEmi > (income * 0.60)) {
+
+            existingLoan.setEligibilityStatus("Not Eligible");
+
+        } else {
+
+            existingLoan.setEligibilityStatus("Review Required");
+        }
+
+
         existingLoan.setStatus(
                 loan.getStatus()
         );
+
 
         return loanRepository.save(existingLoan);
     }
@@ -149,15 +239,64 @@ public class LoanService {
             return null;
         }
 
-        // Update status
-        loan.setStatus(status);
 
-        // Save updated loan
-        Loan updatedLoan = loanRepository.save(loan);
+        // =========================
+        // APPROVAL CHECK
+        // =========================
+
+        if ("Approved".equalsIgnoreCase(status)) {
+
+
+            // Eligibility must be Eligible
+            if (!"Eligible".equalsIgnoreCase(
+                    loan.getEligibilityStatus())) {
+
+                throw new RuntimeException(
+                        "Loan cannot be approved because eligibility is not Eligible"
+                );
+            }
+
+
+            // =========================
+            // DOCUMENT VERIFICATION
+            // =========================
+
+            long verifiedDocuments =
+                    documentRepository
+                            .findByCustomerEmail(
+                                    loan.getEmail()
+                            )
+                            .stream()
+                            .filter(document ->
+                                    "Verified".equalsIgnoreCase(
+                                            document.getStatus()
+                                    )
+                            )
+                            .count();
+
+
+            // All 4 documents must be verified
+            if (verifiedDocuments < 4) {
+
+                throw new RuntimeException(
+                        "Loan cannot be approved until all 4 documents are verified"
+                );
+            }
+        }
 
 
         // =========================
-        // SEND EMAIL TO CUSTOMER
+        // UPDATE STATUS
+        // =========================
+
+        loan.setStatus(status);
+
+        Loan updatedLoan =
+                loanRepository.save(loan);
+
+
+        // =========================
+        // SEND EMAIL
         // =========================
 
         if ("Approved".equalsIgnoreCase(status)) {

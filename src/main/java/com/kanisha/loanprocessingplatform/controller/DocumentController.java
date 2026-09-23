@@ -38,6 +38,23 @@ public class DocumentController {
                         .body("Please select a file");
             }
 
+            // Maximum file size = 5 MB
+            if (file.getSize() > 5 * 1024 * 1024) {
+                return ResponseEntity.badRequest()
+                        .body("File size must be less than or equal to 5 MB");
+            }
+
+// Allowed file types
+            String contentType = file.getContentType();
+
+            if (contentType == null ||
+                    !(contentType.equals("application/pdf") ||
+                            contentType.equals("image/jpeg") ||
+                            contentType.equals("image/png"))) {
+
+                return ResponseEntity.badRequest()
+                        .body("Only PDF, JPG, JPEG and PNG files are allowed");
+            }
             String uploadDirectory = "uploads/";
 
             Path directory = Paths.get(uploadDirectory);

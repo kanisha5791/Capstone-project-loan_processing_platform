@@ -34,9 +34,14 @@ public class Loan {
     @NotNull(message = "Loan term is required")
     @Positive(message = "Loan term must be greater than 0")
     private Integer loanTerm;
+    private Double monthlyIncome;
 
+    private Double assetValue;
+
+    private Double existingEmi;
     @NotBlank(message = "Status is required")
     private String status;
+    private String eligibilityStatus;
 
     public Loan() {}
 
@@ -95,6 +100,29 @@ public class Loan {
     public void setLoanTerm(Integer loanTerm) {
         this.loanTerm = loanTerm;
     }
+    public Double getMonthlyIncome() {
+        return monthlyIncome;
+    }
+
+    public void setMonthlyIncome(Double monthlyIncome) {
+        this.monthlyIncome = monthlyIncome;
+    }
+
+    public Double getAssetValue() {
+        return assetValue;
+    }
+
+    public void setAssetValue(Double assetValue) {
+        this.assetValue = assetValue;
+    }
+
+    public Double getExistingEmi() {
+        return existingEmi;
+    }
+
+    public void setExistingEmi(Double existingEmi) {
+        this.existingEmi = existingEmi;
+    }
 
     public String getStatus() {
         return status;
@@ -102,5 +130,12 @@ public class Loan {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+    public String getEligibilityStatus() {
+        return eligibilityStatus;
+    }
+
+    public void setEligibilityStatus(String eligibilityStatus) {
+        this.eligibilityStatus = eligibilityStatus;
     }
 }

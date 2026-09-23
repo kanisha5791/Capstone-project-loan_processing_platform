@@ -129,19 +129,27 @@ public class LoanController {
     // =========================
     // UPDATE LOAN STATUS
     // =========================
-
     @PutMapping("/{id}/status")
-    public ResponseEntity<Loan> updateStatus(
+    public ResponseEntity<?> updateStatus(
             @PathVariable Long id,
             @RequestParam String status) {
 
-        Loan updatedLoan =
-                loanService.updateStatus(id, status);
+        try {
 
-        if (updatedLoan == null) {
-            return ResponseEntity.notFound().build();
+            Loan updatedLoan =
+                    loanService.updateStatus(id, status);
+
+            if (updatedLoan == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            return ResponseEntity.ok(updatedLoan);
+
+        } catch (RuntimeException e) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
         }
-
-        return ResponseEntity.ok(updatedLoan);
     }
 }
