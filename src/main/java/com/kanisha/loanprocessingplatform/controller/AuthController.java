@@ -29,7 +29,8 @@ import java.time.LocalDateTime;
 @CrossOrigin(origins = {
         "http://localhost:5173",
         "http://localhost:5174",
-        "http://localhost:5175"
+        "http://localhost:5175",
+        "https://capstone-project-loan-processing-pl.vercel.app"
 })
 public class AuthController {
 
