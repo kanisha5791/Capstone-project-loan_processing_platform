@@ -19,7 +19,7 @@ function Login({ onLogin }) {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/auth/login",
+        "http://capstone-project-loanprocessingplatform-production.up.railway.app/auth/login",
         {
           method: "POST",
           headers: {

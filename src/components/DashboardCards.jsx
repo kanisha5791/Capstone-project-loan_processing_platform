@@ -4,7 +4,7 @@ function DashboardCards() {
   const [loans, setLoans] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/loan")
+    fetch("http://capstone-project-loanprocessingplatform-production.up.railway.app/loan")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch loans");

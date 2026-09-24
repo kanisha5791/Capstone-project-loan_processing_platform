@@ -41,7 +41,7 @@ function CustomerLogin({ onLogin, onRegister }) {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/auth/login",
+        "http://capstone-project-loanprocessingplatform-production.up.railway.app/auth/login",
         {
           method: "POST",
           headers: {
@@ -120,7 +120,7 @@ function CustomerLogin({ onLogin, onRegister }) {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/auth/verify-login-otp",
+        "http://capstone-project-loanprocessingplatform-production.up.railway.app/auth/verify-login-otp",
         {
           method: "POST",
           headers: {
@@ -175,7 +175,7 @@ function CustomerLogin({ onLogin, onRegister }) {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/auth/resend-login-otp",
+        "http://capstone-project-loanprocessingplatform-production.up.railway.app/auth/resend-login-otp",
         {
           method: "POST",
           headers: {
@@ -232,7 +232,7 @@ function CustomerLogin({ onLogin, onRegister }) {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/auth/forgot-password",
+        "http://capstone-project-loanprocessingplatform-production.up.railway.app/auth/forgot-password",
         {
           method: "POST",
           headers: {
@@ -288,7 +288,7 @@ function CustomerLogin({ onLogin, onRegister }) {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/auth/verify-forgot-password-otp",
+        "http://capstone-project-loanprocessingplatform-production.up.railway.app/auth/verify-forgot-password-otp",
         {
           method: "POST",
           headers: {
@@ -349,7 +349,7 @@ function CustomerLogin({ onLogin, onRegister }) {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/auth/reset-password",
+        "http://capstone-project-loanprocessingplatform-production.up.railway.app/auth/reset-password",
         {
           method: "POST",
           headers: {

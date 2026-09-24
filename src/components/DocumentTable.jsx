@@ -8,7 +8,7 @@ function DocumentTable() {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        "http://localhost:8080/documents",
+        "http://capstone-project-loanprocessingplatform-production.up.railway.app/documents",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -55,7 +55,7 @@ function DocumentTable() {
     }
 
     window.open(
-      `http://localhost:8080/documents/view/${document.id}`,
+      `http://capstone-project-loanprocessingplatform-production.up.railway.app/documents/view/${document.id}`,
       "_blank"
     );
   };
@@ -71,7 +71,7 @@ function DocumentTable() {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        `http://localhost:8080/documents/${document.id}/status?status=${encodeURIComponent(
+        `http://capstone-project-loanprocessingplatform-production.up.railway.app/documents/${document.id}/status?status=${encodeURIComponent(
           status
         )}`,
         {

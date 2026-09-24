@@ -40,7 +40,7 @@ function CustomerRegister({ onRegister, onBackToLogin }) {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/auth/register",
+        "http://capstone-project-loanprocessingplatform-production.up.railway.app/auth/register",
         {
           method: "POST",
           headers: {
@@ -92,7 +92,7 @@ if (!response.ok) {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/auth/verify-register-otp",
+        "http://capstone-project-loanprocessingplatform-production.up.railway.app/auth/verify-register-otp",
         {
           method: "POST",
           headers: {
@@ -137,7 +137,7 @@ if (!response.ok) {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/auth/register",
+        "http://capstone-project-loanprocessingplatform-production.up.railway.app/auth/register",
         {
           method: "POST",
           headers: {
