@@ -57,7 +57,7 @@ function LoanForm({
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch("http://capstone-project-loanprocessingplatform-production.up.railway.app/loan", {
+      const response = await fetch("https://capstone-project-loanprocessingplatform-production.up.railway.app/loan", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

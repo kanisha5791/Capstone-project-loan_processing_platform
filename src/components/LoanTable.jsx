@@ -15,10 +15,10 @@ function LoanTable({ setSelectedLoan, refresh }) {
           return;
         }
 
-        let url = "http://capstone-project-loanprocessingplatform-production.up.railway.app/loan";
+        let url = "https://capstone-project-loanprocessingplatform-production.up.railway.app/loan";
 
         if (search.trim() !== "") {
-          url = `http://capstone-project-loanprocessingplatform-production.up.railway.app/loan/search?customerName=${encodeURIComponent(
+          url = `https://capstone-project-loanprocessingplatform-production.up.railway.app/loan/search?customerName=${encodeURIComponent(
             search.trim()
           )}`;
         }
@@ -57,7 +57,7 @@ function LoanTable({ setSelectedLoan, refresh }) {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        `http://capstone-project-loanprocessingplatform-production.up.railway.app/loan/${id}`,
+        `https://capstone-project-loanprocessingplatform-production.up.railway.app/loan/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -90,7 +90,7 @@ function LoanTable({ setSelectedLoan, refresh }) {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        `http://capstone-project-loanprocessingplatform-production.up.railway.app/loan/${loan.id}/status?status=${encodeURIComponent(
+        `https://capstone-project-loanprocessingplatform-production.up.railway.app/loan/${loan.id}/status?status=${encodeURIComponent(
           newStatus
         )}`,
         {
